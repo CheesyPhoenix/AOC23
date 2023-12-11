@@ -1,52 +1,54 @@
-const input = await Bun.file("./src/day5/input.txt").text();
+import "./part2";
 
-const lines = input.split("\n");
+// const input = await Bun.file("./src/day5/input.txt").text();
 
-const seeds: { id: number; steps: { [key: string]: number } }[] = lines[0]
-	.split("seeds: ", 2)[1]
-	.trim()
-	.split(" ")
-	.filter((x) => x.length > 0)
-	.map((x) => {
-		return { id: parseInt(x), steps: { seed: parseInt(x) } };
-	});
+// const lines = input.split("\n");
 
-let currentMap: { to: string; from: string } = { to: "", from: "" };
-for (const line of lines) {
-	if (line.length === 0) continue;
+// const seeds: { id: number; steps: { [key: string]: number } }[] = lines[0]
+// 	.split("seeds: ", 2)[1]
+// 	.trim()
+// 	.split(" ")
+// 	.filter((x) => x.length > 0)
+// 	.map((x) => {
+// 		return { id: parseInt(x), steps: { seed: parseInt(x) } };
+// 	});
 
-	if (line.includes("map")) {
-		// switch maps
-		const [from, to] = line.split(" map:", 2)[0].split("-to-");
-		currentMap = { to, from };
+// let currentMap: { to: string; from: string } = { to: "", from: "" };
+// for (const line of lines) {
+// 	if (line.length === 0) continue;
 
-		seeds.forEach((seed) => {
-			seed.steps[currentMap.to] = seed.steps[currentMap.from];
-		});
+// 	if (line.includes("map")) {
+// 		// switch maps
+// 		const [from, to] = line.split(" map:", 2)[0].split("-to-");
+// 		currentMap = { to, from };
 
-		continue;
-	}
+// 		seeds.forEach((seed) => {
+// 			seed.steps[currentMap.to] = seed.steps[currentMap.from];
+// 		});
 
-	const [destStart, sourceStart, rangeLength] = line
-		.split(" ")
-		.map((x) => parseInt(x));
+// 		continue;
+// 	}
 
-	seeds.forEach((seed) => {
-		if (
-			seed.steps[currentMap.from] > sourceStart &&
-			seed.steps[currentMap.from] < sourceStart + rangeLength
-		) {
-			seed.steps[currentMap.to] =
-				destStart + seed.steps[currentMap.from] - sourceStart;
-		}
-	});
-}
+// 	const [destStart, sourceStart, rangeLength] = line
+// 		.split(" ")
+// 		.map((x) => parseInt(x));
 
-// get lowest location number
-let lowest: number | undefined = undefined;
-seeds.forEach((seed) => {
-	if (lowest === undefined || seed.steps["location"] < lowest)
-		lowest = seed.steps["location"];
-});
+// 	seeds.forEach((seed) => {
+// 		if (
+// 			seed.steps[currentMap.from] > sourceStart &&
+// 			seed.steps[currentMap.from] < sourceStart + rangeLength
+// 		) {
+// 			seed.steps[currentMap.to] =
+// 				destStart + seed.steps[currentMap.from] - sourceStart;
+// 		}
+// 	});
+// }
 
-console.log(lowest);
+// // get lowest location number
+// let lowest: number | undefined = undefined;
+// seeds.forEach((seed) => {
+// 	if (lowest === undefined || seed.steps["location"] < lowest)
+// 		lowest = seed.steps["location"];
+// });
+
+// console.log(lowest);
