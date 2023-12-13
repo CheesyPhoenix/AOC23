@@ -27,12 +27,14 @@ let currentMap: {
 	rangeLength: number;
 }[] = [];
 for (const line of lines) {
-	if (line.length === 0) continue;
+	if (line.length === 0 || line.includes("seeds:")) continue;
 
 	if (line.includes("map")) {
 		// switch maps
-		maps.push(currentMap);
-		currentMap = [];
+		if (currentMap.length > 0) {
+			maps.push(currentMap);
+			currentMap = [];
+		}
 
 		continue;
 	}
@@ -44,27 +46,56 @@ for (const line of lines) {
 }
 
 maps.forEach((map) => {
-	seeds.forEach((seed) => {
-		map.forEach((op) => {
+	for (const seed of seeds) {
+		for (const op of map) {
 			if (
-				seed.from > op.sourceStart &&
-				seed.from < op.sourceStart + op.rangeLength
+				seed.from >= op.sourceStart + op.rangeLength ||
+				seed.from + seed.count <= op.sourceStart
 			) {
+				continue;
+			}
+			if (seed.from >= op.sourceStart) {
 				if (
 					seed.from + seed.count - 1 <
 					op.sourceStart + op.rangeLength
 				) {
+					// from inside to inside
 					seed.from = op.destStart + seed.from - op.sourceStart;
+
+					break;
 				} else {
-					const toTake = op.rangeLength - seed.from - op.destStart;
+					// from inside to outside
+					const toTake =
+						op.rangeLength - (seed.from - op.sourceStart);
 					seeds.push({
 						from: seed.from + toTake,
 						count: seed.count - toTake,
 					});
 					seed.from = op.destStart + seed.from - op.sourceStart;
 					seed.count = toTake;
+					break;
 				}
-			} else if (seed.from + seed.count - 1 )
-		});
-	});
+			} else {
+				// from outside to inside
+				seeds.push({
+					from: seed.from,
+					count: op.sourceStart - seed.from,
+				});
+				seed.count = seed.count - (op.sourceStart - seed.from);
+				seed.from = op.destStart;
+				break;
+			}
+		}
+	}
 });
+
+let lowest: number | undefined = undefined;
+seeds.forEach((seed) => {
+	if (lowest === undefined || seed.from < lowest) {
+		lowest = seed.from;
+	}
+});
+
+console.log(lowest);
+
+console.log(seeds.map((x) => x.from).sort((a, b) => a - b));
