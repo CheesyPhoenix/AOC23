@@ -19,13 +19,19 @@ const seeds: { from: number; count: number }[] = inputNums
 		};
 	});
 
-let maps: { destStart: number; sourceStart: number; rangeLength: number }[][] =
-	[];
+let maps: {
+	destStart: number;
+	sourceStart: number;
+	rangeLength: number;
+	name: string;
+}[][] = [];
 let currentMap: {
 	destStart: number;
 	sourceStart: number;
 	rangeLength: number;
+	name: string;
 }[] = [];
+let currname = "null";
 for (const line of lines) {
 	if (line.length === 0 || line.includes("seeds:")) continue;
 
@@ -35,6 +41,7 @@ for (const line of lines) {
 			maps.push(currentMap);
 			currentMap = [];
 		}
+		currname = line;
 
 		continue;
 	}
@@ -42,11 +49,15 @@ for (const line of lines) {
 	const [destStart, sourceStart, rangeLength] = line
 		.split(" ")
 		.map((x) => parseInt(x));
-	currentMap.push({ destStart, rangeLength, sourceStart });
+	currentMap.push({ destStart, rangeLength, sourceStart, name: currname });
 }
+maps.push(currentMap);
+
+const stages = [JSON.parse(JSON.stringify(seeds))];
 
 maps.forEach((map) => {
-	for (const seed of seeds) {
+	for (let i = 0; i < seeds.length; i++) {
+		const seed = seeds[i];
 		for (const op of map) {
 			if (
 				seed.from >= op.sourceStart + op.rangeLength ||
@@ -87,6 +98,8 @@ maps.forEach((map) => {
 			}
 		}
 	}
+
+	stages.push(JSON.parse(JSON.stringify(seeds)));
 });
 
 let lowest: number | undefined = undefined;
