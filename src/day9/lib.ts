@@ -38,3 +38,34 @@ export function part1(input: string): number {
 	});
 	return sum;
 }
+
+export function getPrevious(numbers: number[]): number {
+	const diffs: number[][] = [];
+	let currDiff = numbers;
+	while (true) {
+		diffs.push(currDiff);
+		if (!currDiff.some((x) => x !== 0)) {
+			break;
+		}
+
+		currDiff = getDiffs(currDiff);
+	}
+
+	// reconstruct
+	let nextVal = 0;
+	diffs.toReversed().forEach((diff) => {
+		nextVal = diff[0] - nextVal;
+	});
+
+	return nextVal;
+}
+
+export function part2(input: string): number {
+	const lines = input.split("\n");
+
+	let sum = 0;
+	lines.forEach((line) => {
+		sum += getPrevious(line.split(" ").map((x) => parseInt(x)));
+	});
+	return sum;
+}

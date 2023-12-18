@@ -1,5 +1,5 @@
 import { test, expect } from "bun:test";
-import { getDiffs, getNext } from "./lib";
+import { getDiffs, getNext, getPrevious } from "./lib";
 
 test("getDiffs basic", () => {
 	expect(getDiffs([0, 3, 6, 9, 12, 15])).toEqual([3, 3, 3, 3, 3]);
@@ -23,4 +23,8 @@ test("getNext example2", () => {
 
 test("getNext example3", () => {
 	expect(getNext([10, 13, 16, 21, 30, 45])).toBe(68);
+});
+
+test("getPrevious example3", () => {
+	expect(getPrevious([10, 13, 16, 21, 30, 45])).toBe(5);
 });
